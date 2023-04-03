@@ -309,6 +309,114 @@ In the next video we'll spend time on security precossuion of developing a plugi
 
 #7 -- PHP Visibility Methods
 <!-- 
-    
+  This lesson will be focused on PHP OOP and understand different visibility of variables of methods inside a PHP class.
 
+  We'll learn how to propery use a different visiblity option.
+  Differentiate between public, private and protected variable and method.
+  Aswell as use static methods.
+
+  In OOP we need to define a class that wraps all different methods, in order to access a method of the class we need to create a new instance of the class and store it inside the variable and from that variable call the method with -> .
+  This works because all methods inside class in PHP are public methods.
+
+  Lets start by checking the visibility of a method and what does it mean?
+  We have 3 options of defining visiblity for a method/variable:
+  
+  public
+  protected
+  private
+
+  These declarations are a part of PHP, what it does it defines the vsibility of a specific method. It's saying to PHP:
+
+    Public method/variable: Can be accessed everywhere, from the class itself, outside, by declaring instance.. In the example we access the method from outside the class using the instance.
+    If we don't declare a visibility, the methods/variables are automatically public.
+    
+    Protected: Can be accessed only within the class itself or from a class that extends the current class.
+    For example if we want to declare custom post type is protected, and we decide to call it from the instance(outside the class) it'll trigger a PHP error. Call to a protected method. 
+
+    Private: Can be accessed only by the class itself.
+
+  Why are we splitting the class?
+  It's because in the future it's important to split the class to different method, extending the class and properly protecting your methods with different visibilities.
+
+  The visiblity always needs to be before a function.
+  
+  The class variables:
+  public $var1 = 1;
+  private $var2 = 2;
+  protected $array1 = array(); 
+-->
+
+#8 -- Static Methods and Multiple Files
+<!-- 
+  In this lesson, we're going to tackle the static method of PHP and how to use them to split our file in multiple files and manage different classes in the better more organized way.
+
+  Lets learn what a static method does, if you implement the static attribute to a function.
+
+  It could be attached to whatever kind of function (private,protected,public).
+
+  Visibility -> STATIC/NOT -> function -> $functionName
+
+  What a static method does is:
+  Allows you to use the method without initializing the class.
+
+  <Code>
+    // To call a static method without initializing the class.
+    ItayPlugin::register();
+    // Calling this method, throws an error! Why is that?
+    // Beause we are trying to use $this, inside an uninitialized class method, so the $this keyword is not assigned to the class we're trying to call the method of.
+
+    // Because we didn't initialize the class, new ItayPlugin(); the $this keyword is not assigned to an object.
+
+    //However if the register() method was to echo 'some text';
+    // Meaning if the register() method was dependant of the $this keyword it won't work because the $this variable is not assigned to any class because the class wasn't initalized.
+    // It'd work beautifully!
+  </Code>
+
+  In order to call another method inside a class that wasn't initialized we need to make that other method a static one.
+  To do it we need to pass the name of the class itself.
+  <Code>
+    add_action('admin_enqueue_scripts', array('ItayPlugin', 'enqueue'));
+  </Code>
+
+  Why are we doing this? Because sometimes it's useful. Lets learn how to split this code into 2 other files and delegate it to handle only activate and deactivate hooks!
+
+  Create a new folder called inc, inside that folder you should have all files and subfolders related to PHP.
+
+  Now lets create the boilerplate for our classes, lets copy it from the package information of the first class.
+  <Code>
+    class ItayPluginActivate {
+      public static function activate() {
+        flush_rewrite_rules();
+      }
+    }
+  </Code>
+
+  Now we can delete it from the original class and delegate those activate and deactivate actions to those newly created classes without instantiating them!
+
+  Because we split those methods to different files, we need to require them.
+  <Code>
+    // Activation
+    require_once plugin_dir_path(__FILE__) . 'inc/itay-plugin-activate.php';
+    register_activation_hook(__FILE__, array('ItayPluginActivate', 'activate'));
+  </Code>
+    
+  This is how we call a static method of a hook without initializing the class itself.
+
+  To call it without using a hook:
+  <Code>
+    // This activate function is inside the main itay-plugin.php
+    function activate() { 
+      require_once plugin_dir_path(__FILE__) . 'inc/itay-plugin-activate.php';
+      ItayPluginActivate::activate();
+    }
+
+    register_activation_hook(__FILE__, array($itayPlugin, 'activate'));
+  </Code>
+
+  Freaking beautiful, the way static functions work.
+  PHP is overall a really beautiful language.
+
+  You can call a method from another file in 2 different ways:
+  1. Require the file and call the method inside the main class and call it statically.
+  2. Call the method directly inside the register hook, 1st param is name of class and 2nd is method, but before you need to require the class.
 -->
