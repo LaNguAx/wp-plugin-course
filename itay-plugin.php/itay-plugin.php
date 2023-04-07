@@ -5,6 +5,7 @@
  * @package ItayPlugin
  */
 
+
 /*
 Plugin Name: Itay Plugin
 Plugin URI: https://github.com/LaNguAx/wp-plugin-course
@@ -22,62 +23,16 @@ if (file_exists(dirname(__FILE__) . '/vendor/autoload.php')) {
   require_once dirname(__FILE__) . '/vendor/autoload.php';
 }
 
-use Inc\Activate;
-use Inc\Deactivate;
-use Inc\Admin\AdminPages;
-
-class ItayPlugin {
-
-  public $plugin;
-
-  function __construct() {
-    $this->plugin = plugin_basename(__FILE__);
-  }
-
-  public function register() {
-    add_action('admin_enqueue_scripts', array($this, 'enqueue'));
-
-    add_action('admin_menu', array('AdminPages', 'add_admin_pages'));
-
-    add_filter("plugin_action_links_d$this->plugin", array('AdminPages', 'settings_link'));
-  }
-
-  protected function create_post_type() {
-    add_action('init', array($this, 'custom_post_type'));
-  }
-
-  function custom_post_type() {
-    register_post_type('book', array('public' => true, 'label' => 'Books'));
-  }
-
-  function enqueue() {
-    //enqueue all of our scripts.
-    wp_enqueue_style('mypluginstyle', plugin_dir_path(__FILE__) . '/assets/mystyle.css');
-    wp_enqueue_script('mypluginscript', plugin_dir_path(__FILE__) . '/assets/myscript.js');
-  }
-
-  function activate() {
-    // require_once plugin_dir_path(__FILE__) . 'inc/itay-plugin-activate.php';
-    // ItayPluginActivate::activate();
-
-    // After composer we can simply use
-    Activate::activate();
-  }
+function activate_itay_plugin() {
+  Inc\Base\Activate::activate();
 }
+register_activation_hook(__FILE__, 'activate_itay_plugin');
 
-if (class_exists('ItayPlugin')) {
-  $itayPlugin = new ItayPlugin('Itay Plugin initialized!');
-  $itayPlugin->register();
+function deactivate_itay_plugin() {
+  Inc\Base\Deactivate::deactivate();
 }
+register_deactivation_hook(__FILE__, 'deactivate_itay_plugin');
 
-
-
-// Activation
-register_activation_hook(__FILE__, array($itayPlugin, 'activate'));
-
-// DeActivation
-// require_once plugin_dir_path(__FILE__) . 'inc/itay-plugin-deactivate.php';
-register_deactivation_hook(__FILE__, array('Deactivate', 'deactivate'));
-
-// Uninstall
-//View uninstall file.
+if (class_exists('Inc\\Init')) {
+  Inc\Init::register_services();
+}

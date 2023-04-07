@@ -554,5 +554,206 @@ In the next video we'll spend time on security precossuion of developing a plugi
 
   Now we have created the structure.
   We have the 'inc' folder, where all the php methods are inside, we have the init.php that we're going to initialize dynamically all the classes and methods that we need to trigger as soon as plugin is activated.
+
+  <Code>
+    if(class_exists('Inc\\Init')) {
+      Inc\Init::register_services();
+    }
+  </Code>
   
+  We have created an Init file and a class Init which in there we will use the Init class to trigger and load all the other classes without creating an instance of the class Init so we set the register_services() method to be a static method.
+
+  This class will be to register our services and return those instance of those classes.
+
+  The init class will never get extended, or get re-used by another class we can specify a 'final' before the class, it means PHP will not have ability to extend this class by another class.
+
+  <Code>
+    final class Init{}
+  </Code>
+
+  Now lets check how to gerenate the admin page dynamically.
+  All of the classes will have a register method to register triggers functions.
+
+  Lets define in the Init.php file a function that register all of our list of services.
+  It'll return the full list of classes inside an array so we could initialize them.
+
+  to return an entire class without initializing it:
+  <Code>
+    public static function get_services() {
+      return [
+        Pages\Admin::class;
+      ];
+    }
+  </Code>
+
+  Lets create a constant variable for the plugin dir path inside the main plugin file itay-plugin.php
+
+  To enqueue scripts we create a new file called enqueue inside Base.
+
+-->
+
+<!-- BOILERPLATE THAT WE DELETED BECAUSE OF NEW STRUCUTRE -->
+<!-- 
+  <Code><!-- 
+use Inc\Activate;
+use Inc\Deactivate;
+use Inc\Admin\AdminPages;
+  
+class ItayPlugin {
+
+public $plugin;
+
+function __construct() {
+  $this->plugin = plugin_basename(__FILE__);
+}
+
+public function register() {
+  add_action('admin_enqueue_scripts', array($this, 'enqueue'));
+
+  add_action('admin_menu', array('AdminPages', 'add_admin_pages'));
+
+  add_filter("plugin_action_links_d$this->plugin", array('AdminPages', 'settings_link'));
+}
+
+protected function create_post_type() {
+  add_action('init', array($this, 'custom_post_type'));
+}
+
+function custom_post_type() {
+  register_post_type('book', array('public' => true, 'label' => 'Books'));
+}
+
+function enqueue() {
+  //enqueue all of our scripts.
+  wp_enqueue_style('mypluginstyle', plugin_dir_path(__FILE__) . '/assets/mystyle.css');
+  wp_enqueue_script('mypluginscript', plugin_dir_path(__FILE__) . '/assets/myscript.js');
+}
+
+function activate() {
+  // require_once plugin_dir_path(__FILE__) . 'inc/itay-plugin-activate.php';
+  // ItayPluginActivate::activate();
+
+  // After composer we can simply use
+  Activate::activate();
+}
+}
+
+if (class_exists('ItayPlugin')) {
+$itayPlugin = new ItayPlugin('Itay Plugin initialized!');
+$itayPlugin->register();
+}
+
+
+
+// Activation
+register_activation_hook(__FILE__, array($itayPlugin, 'activate'));
+
+// DeActivation
+// require_once plugin_dir_path(__FILE__) . 'inc/itay-plugin-deactivate.php';
+register_deactivation_hook(__FILE__, array('Deactivate', 'deactivate'));
+
+// Uninstall
+//View uninstall file. 
+</Code>
+-->
+
+
+RECAP: Plugin Structure & Classes as Services
+<!-- 
+  The plugin structure php structure is split into 2 files.
+  Base & Pages.
+  Base controls the php code for the plugin itself and not specific pages.
+  Pages controls the php code for the specific pages we want to manipulate.
+
+  The way Aless teached us to use the structure is by creating a php file called Init inside the 'inc' folder and within that file create a class that'll handle the automation of instantiating the necessary classes for the plugin to work, all we need to do is simply add the classes themselves (not instantiated versions of them) to the array that gets them.
+
+  Basically what he's trying to do is say that Classes are services, meaning we need to get them first, have them saved somewhere in a really top level function (in the Init.php file) and handle all the classes within there. 
+
+  There we can add new classes and control them.
+
+  We are automating the generation of the classes by using a top level Init class that'll loop through the classes we give it and initialize them and execute the register() method within them after their execution.
+
+  Then inside those classes, the $this keyword will be available and we could indeed access the register() method. View the code:
+
+  <Code>
+    <Code Inside main file(itay-plugin.php)>
+      if (class_exists('Inc\\Init')) {
+        Inc\Init::register_services();
+      }
+    </Code>
+
+    final class Init {
+      /**
+      * Store all the classes inside an array
+      * @return array Full list of classes
+      */
+      public static function get_services() {
+        return [
+          //Here we add the new classes themselves, not their instance.
+          Pages\Admin::class,
+          Base\Enqueue::class,
+        ];
+      }
+
+      /**
+      * Loop through the classes, intialize them.
+      * and call the register() method if exists.
+      * @return 
+      */
+      public static function  register_services() {
+        foreach (self::get_services() as $class) {
+          $service = self::instantiate($class);
+          if (method_exists($service, 'register')) {
+            $service->register();
+          }
+        }
+      }
+      /**
+      * Initialize the class
+      * @param class $class class from the services array
+      * @return class instance new instance of the class
+      */
+      private static function instantiate($class) {
+        $service = new $class();
+        return $service;
+      }
+    }
+  </Code>
+
+  Note that the 'self' keyword is used to refer to a class that has not been instantiated.
+
+  IMO this is a really beautiful approach, yes it will take time to set it up but after that it's amazing creating new classes and working with them.
+
+  Also note that we need to save the PLUGIN_PATH and the PLUGIN_URL to a global constant variable because the plugin_dir_path changes the return value according to the current location of the file, so we set those constant variables inside the main itay-plugin.php file for the path to be the original plugin path.
+
+  To summarize, the plugin is split into top level classes that control things for the whole plugin and into lower level class that control specific things in the plugin.
+
+  We then load them automatically when the plugin is generated using a loop and instantiate them and call the register method within them that'll handle the action hooks, etc.
+-->
+
+#12 -- Starter Plugin Structure
+<!-- 
+  In this lesson we are going to continue the implementation of our new plugin architecture by reactivating the methods we had before.
+
+  Right now we are missing the settings and activation/deactivation method.
+
+  WP requires the activation/deactivation hooks needs to be outside of any class so they need to be inside the main plugin file:
+  <Code>
+    register_activation_hook(__FILE__, 'activate_itay_plugin');
+    register_deactivation_hook(__FILE__, 'deactivate_itay_plugin');
+  </Code>
+-->
+
+#13 -- Visual Deby and Clean Up
+<!-- 
+  In this lesson, we are going to spend a few minutes of cleaning up the structure we did last time. The main focus is to consider the visual depth of the PHP script.
+
+  What if there's another plugin related constants?
+  It could interefere with our constants, lets create a base controller that defines those public constants and extend it to let other classes to use those public variables.
+  
+  Lets create a new file called 'BaseController.php'.
+
+  That class, the only thing it does is: defines publicly accessable variabl and then intialize them in the construct to set them up properly in our plugin.
+
+
 -->
