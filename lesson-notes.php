@@ -755,5 +755,115 @@ RECAP: Plugin Structure & Classes as Services
 
   That class, the only thing it does is: defines publicly accessable variabl and then intialize them in the construct to set them up properly in our plugin.
 
+  To summarize: Instead of using 'define' to set up constant variables, we use a class that creates public variables that hold the constants' values that we wanted and we extend the other classes so they could make use of the class that creates the variables (baseContrller);
+-->
+
+#14 -- Modular Administration Page
+<!-- 
+  In this lesson, Lets write down what we want to build, view README.md file.
+
+  Lets create the administration area.
+  
+  Lets create an API class that taps the settings API and gives us the access to a more modular approach.
+
+  Because we are going to create a class that'll handle the Settings API lets create a folder called API, and we're going to create in it our files that'll handle the api calls within wordpress.
+
+  <Code>
+    class SettingsApi {
+
+      public $admin_pages = array();
+
+      public function register() {
+        if (!empty($this->admin_pages)) {
+          add_action('admin_menu', array($this, 'addAdminMenu'));
+        }
+      }
+
+      public function addPages(array $pages) {
+        $this->admin_pages = $pages;
+        // this returning for each method is important for method chaining.
+        return $this;
+      }
+
+
+      public  function addAdminMenu() {
+        foreach ($this->admin_pages as $page) {
+          add_menu_page($page['page_title'], $page['menu_title'], $page['capability'], $page['menu_slug'], $page['callback'], $page['icon_url'], $page['position']);
+        }
+      }
+    }
+  </Code>
+
+  Then the usage inside Admin.php changes:
+  <Code>
+    class Admin extends BaseController {
+
+      public $settings;
+
+      public $pages = array();
+
+      public function __construct() {
+
+        $this->settings = new SettingsApi();
+        $this->pages = array(
+          [
+            'page_title' => 'Itay Plugin',
+            'menu_title' => 'ItayPL',
+            'capability' => 'manage_options',
+            'menu_slug' => 'itay_plugin',
+            'callback' => function () {
+              echo '<h1>Itay Plugin</h1>';
+            },
+            'icon_url' => 'dashicons-store',
+            'position' => 110
+          ],
+          [
+            'page_title' => 'Test Plugin',
+            'menu_title' => 'TestPL',
+            'capability' => 'manage_options',
+            'menu_slug' => 'Test_plugin',
+            'callback' => function () {
+              echo '<h1>Test Plugin</h1>';
+            },
+            'icon_url' => 'dashicons-external',
+            'position' => 9
+          ]
+
+        );
+      }
+      public function register() {
+        $this->settings->addPages($this->pages)->register();
+      }
+    }
+  </Code>
+
+  I want to explain this code briefly because I believe this is really important to understand for the continuation of developing plugins.
+
+  Basically, the approach here is to create an external class that'll handle the data manipulation that is needed, and return it to the class that is the first executor of that action.
+
+  Here what happens is that we create a new class called SettingsAPI, and inside it define functions that handle generating our admin pages using variables and arrays with their values being unknown(I'll say that is literally amazing).
+
+  Then we need to use that class inside the Admin.php file so we create a variable for it and after that Admin class is generated, in the __construct function we give a the created variable ($settings) the value of the new instance of the SettingsAPI class so that we could use that class' methods inside our Admin.php class.
+
+  Then after the Admin class is constructed, immediatly after the register() method is being executed, why is that?
+  Because of the Init.php class that we created before that handles executing the register() method of each class after it's instantiated.
+
+  And inside that register() method we take advantage of the new instance of SettingsAPI class to generate the menus but with the data that we receive inside Admin class.
+
+  $this->settings->addPages($this->pages)->register();
+  This line does all the hard work, basically what's going on here is:
+  Admin class accesses the settings variable which was set to be the new instance of the SettingsAPI class, then it reaches inside that new class instance for the method called addPages, addPages method sets the value of the new Settings API instance's variable called admin_pages to the value of class Admin->pages and after that it returns $this, meaning after addPages() function is executed on the settings instance the return value is the new instance itself so we can take advantage of METHOD CHAINING and then access the register() method on the new Settings API instance and that'll take care of adding the menu pages themselves. 
+  
+  SettingsAPI does all the hardwork, Admin gets all the data and passes SettingsAPI the data to do the work. 
+-->
+
+#15 -- Modular Admin SubPages
+<!-- 
+  In this lesson, we want to generate subpages.
+  The first subpage you want to create is the repetition of the main page, for example. Click on WPdashboard->Settings->General. Settings and General are the same, 2 links go to the same direction.
+
+  In PHP whenever you write return whatever is after the return is not going to be executed.
+
+  
 
 -->

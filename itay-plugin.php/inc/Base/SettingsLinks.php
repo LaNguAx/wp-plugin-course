@@ -11,7 +11,6 @@ use \Inc\Base\BaseController;
 class SettingsLinks extends BaseController {
 
   public function register() {
-    echo $this->plugin_name;
     add_filter('plugin_action_links_' . $this->plugin_name, array($this, 'settings_link'));
   }
   public function settings_link($links) {
