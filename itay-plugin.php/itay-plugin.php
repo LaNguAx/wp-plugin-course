@@ -18,12 +18,30 @@ Text Domain: itay-plugin
 
 defined('ABSPATH') or die('Hey, you can\t access this file, you silly human!');
 
+if (file_exists(dirname(__FILE__) . '/vendor/autoload.php')) {
+  require_once dirname(__FILE__) . '/vendor/autoload.php';
+}
+
+use Inc\Activate;
+use Inc\Deactivate;
+use Inc\Admin\AdminPages;
 
 class ItayPlugin {
 
+  public $plugin;
+
+  function __construct() {
+    $this->plugin = plugin_basename(__FILE__);
+  }
+
   public function register() {
     add_action('admin_enqueue_scripts', array($this, 'enqueue'));
+
+    add_action('admin_menu', array('AdminPages', 'add_admin_pages'));
+
+    add_filter("plugin_action_links_d$this->plugin", array('AdminPages', 'settings_link'));
   }
+
   protected function create_post_type() {
     add_action('init', array($this, 'custom_post_type'));
   }
@@ -39,8 +57,11 @@ class ItayPlugin {
   }
 
   function activate() {
-    require_once plugin_dir_path(__FILE__) . 'inc/itay-plugin-activate.php';
-    ItayPluginActivate::activate();
+    // require_once plugin_dir_path(__FILE__) . 'inc/itay-plugin-activate.php';
+    // ItayPluginActivate::activate();
+
+    // After composer we can simply use
+    Activate::activate();
   }
 }
 
@@ -55,8 +76,8 @@ if (class_exists('ItayPlugin')) {
 register_activation_hook(__FILE__, array($itayPlugin, 'activate'));
 
 // DeActivation
-require_once plugin_dir_path(__FILE__) . 'inc/itay-plugin-deactivate.php';
-register_deactivation_hook(__FILE__, array('ItayPluginDeactivate', 'deactivate'));
+// require_once plugin_dir_path(__FILE__) . 'inc/itay-plugin-deactivate.php';
+register_deactivation_hook(__FILE__, array('Deactivate', 'deactivate'));
 
 // Uninstall
 //View uninstall file.

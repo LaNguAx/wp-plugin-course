@@ -420,3 +420,139 @@ In the next video we'll spend time on security precossuion of developing a plugi
   1. Require the file and call the method inside the main class and call it statically.
   2. Call the method directly inside the register hook, 1st param is name of class and 2nd is method, but before you need to require the class.
 -->
+
+#9 -- Settings Link and Admin Pages
+<!-- 
+  In this lesson, we're going to take a look on how to build the most basic things of a plugin, custom admin sections, custom links, etc..
+  We'll learn learn how to have a custom admin section with a custom link and how to link that to our admin area.
+
+  Lets activate the custom admin area first, using the register function.
+
+  <Code>
+    public function register() {
+      add_action('admin_enqueue_scripts', array($this, 'enqueue'));
+      add_action('admin_menu', array($this, 'add_admin_pages'));
+    }
+  </Code>
+
+  <Code>
+    public function add_admin_pages() {
+      // Manage options is saying that only an administrator can access this page.
+      // Always write slugs with underscores
+      add_menu_page('Itay Plugin', 'ItayPL', 'manage_options', 'itay_plugin', array($this, 'admin_index'), 'dashicons-store', 110);
+    }
+    public function admin_index() {
+    }
+  </Code>
+
+  Now lets create a template that'll be used to genereate the html for Itay Plugin menu page.
+
+  Create a new file, called admin.php inside a folder named templates.
+  Now we need to require that file in the admin_index method that is being used as a callback for the admin_menu_page generation of the HTML.
+
+  Damn, that works beautifully, I swear OOP is simply beautiful..
+
+
+  Lets implement a settings page in the Plugins menu for our own plugin, we can filter the look of our plugin in the Plugins link in the admin dashboard.
+
+  Everytime we want to hook a method we will not hook it directly.
+  We will use the register() method to specify the functions for the hooks.
+
+  Lets create the hook that updates the links for our plugins in the plugins list.
+
+  <Code>
+    // add_filter('plugin_action_links_NAME-OF-MY-PLUGIN');
+  </Code>
+  
+  This filter gives our return function a list of the links for each plugin page and we can add/remove and then return the data, so our plugin will have different links.
+
+  We want to use in the filter our plugin's name so we can do:
+  plugin_basename(__FILE__) and concatenate it to plugin_action_links_ filter hook.
+
+  However that's pretty bad, so lets store the name of the plugin inside a variable, so we can access it easily.
+
+  <Code>
+    class ItayPlugin {
+      public $plugin;
+
+      function __construct() {
+        $this->plugin = plugin_basename(__FILE__);
+      }
+    }
+  </Code>
+  
+  Everytime a class will initialize the construct function will set the class variable $plugin to the plugin_basename(__FILE__) return value, we do that when the class instantiates because that means all of our settings are registered and it's the correct time to set the variables data.
+
+  Now lets create the settings field for our plugin:
+  <Code>
+    public function settings_link($links) {
+      // add custom settings link
+      $settings_link = '<a href="options-general.php?page=itay_plugin">Settings</a>';
+      array_push($links, $settings_link);
+      return $links;
+    }
+  </Code>
+-->
+
+#10 -- Namespaces and Composer Autoload
+<!-- 
+  In this lesson, we're going to take a look on how to implement composer namespaces inside our plugin.
+  Composer is a package manager for PHP.
+
+  What it does is give you dynamic access to the libraries you want to use to build better PHP scripts, we'll use autoload which gives us the abitlity to use namespaces instead of using require once and all of those things, etc.
+  We can simply specifiy the name of the class to reference a file.
+
+  Download composer and install it.
+  
+  After we installed it, we need to require it once within all of our script.
+  <Code>
+    if (file_exists(dirname(__FILE__) . '/vendor/autoload.php'))  {
+      require_once dirname(__FILE__) . '/vendor/autoload.php';
+    }
+  </Code>
+
+  Instead of using require_once plugin_dir_path(__FILE__) . 'inc/itay-plugin-activate.php';
+
+  We go into that file that we are requiring and we set the name of it using Namespace Inc;
+  And lets rename the file to Activate.php and the class in the file to Activate.php
+
+  To use the file we use:
+  use Inc\Activate;
+
+  Then to use it instead of:
+  <Code>
+    require_once plugin_dir_path(__FILE__) . 'inc/itay-plugin-activate.php';
+    ItayPluginActivate::activate();
+  </Code>
+
+  We simply do: 
+  <Code>
+    Activate::activate();
+  </Code>
+
+  Lets do the same for deactivate:
+  <Code>
+  // require_once plugin_dir_path(__FILE__) . 'inc/itay-plugin-deactivate.php';
+  
+  register_deactivation_hook(__FILE__, array('Deactivate', 'deactivate'));
+  
+  </Code>
+
+  The ability of 'use' will give us the ability to use a better way to recognize our files and folders, and have a better structure, without having require_once or other weird names for paths.
+-->
+
+#11 -- Classes as Services
+<!-- 
+  In this lesson, we're going to take a look on how to structure by intitial files in order to build a proper plugin.
+
+  We need to leave the title of the plugin and first file of plugin with same exact name, that cannot be changed.
+
+  Lets create a new file called Init.php inside 'inc' folder
+  and then lets create a folder called 'Pages' and 'Base'.
+
+  Now lets move activate/deactivate into Base folder.
+
+  Now we have created the structure.
+  We have the 'inc' folder, where all the php methods are inside, we have the init.php that we're going to initialize dynamically all the classes and methods that we need to trigger as soon as plugin is activated.
+  
+-->
