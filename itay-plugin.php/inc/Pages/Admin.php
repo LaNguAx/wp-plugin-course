@@ -66,3 +66,4 @@ class Admin extends BaseController {
     $this->settings->addPages($this->pages)->withSubPage('Dashboard')->addSubPages($this->subpages)->register();
   }
 }
+// i am taliya shaul and i love itay but just little ok?
