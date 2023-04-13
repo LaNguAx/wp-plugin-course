@@ -998,5 +998,16 @@ RECAP: Plugin Structure & Classes as Services
 #17c -- Admin Custom Fields
 <!-- 
   The last part of how to build a custom field in the administration area of WP with our custom plugin.
-  
+
+
+  Basically the sections are created dynamically from an array, so we created an interface where only updating the array is required in order to generate new fields.
+
+  This approach of allecad is literally amazing.
+-->
+#18 -- Admin Tabs in Vanilla JS
+<!-- 
+  In this lesson, we are going to start customizing the admin panel.
+  We'll create an admin panel, with 3 tabs.
+
+  Just simple JS and CSS, view those files, you already know this stuff.
 -->
