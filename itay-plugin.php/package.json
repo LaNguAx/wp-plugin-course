@@ -1,0 +1,15 @@
+{
+  "name": "itay-plugin.php",
+  "version": "1.0.0",
+  "description": "package file for plugin course",
+  "main": "index.js",
+  "scripts": {
+    "start": "wp-scripts start src/admin/adminscript.js",
+    "build": "wp-scripts build"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@wordpress/scripts": "^26.2.0"
+  }
+}

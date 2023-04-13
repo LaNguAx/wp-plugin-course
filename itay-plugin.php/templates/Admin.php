@@ -16,7 +16,7 @@
       <!-- We need to point to the options.php, this is the built in page that handles the all the updates save/delete for our custom fields. -->
       <form method="post" action="options.php">
         <?php
-        settings_fields('itay_options_group');
+        settings_fields('itay_plugin_settings');
         do_settings_sections('itay_plugin');
         submit_button();
         ?>

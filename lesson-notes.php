@@ -1011,3 +1011,17 @@ RECAP: Plugin Structure & Classes as Services
 
   Just simple JS and CSS, view those files, you already know this stuff.
 -->
+
+#19 -- Modular Callbacks
+<!-- 
+  In this tutorial we are going to look at how to automatically activate/deactive specific section through checkboxes in UI sections in our administration area.
+
+  I first set up the whole JS automation part using @wordpress/scripts like I learned in Brad's course, this way the whole process is automated and I changed the wp_enqeueu_script location to build/adminscript.js and for the css.
+
+  We're going to list all the settings/features with a checkbox to activate, everytime we activate it should appear in the admin sidebar.
+
+  First lets generate the settings area.
+
+  Go into Inc->Admin, lets generate the names of the fields.
+
+-->

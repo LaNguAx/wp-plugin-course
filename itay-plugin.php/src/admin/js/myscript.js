@@ -1,3 +1,4 @@
+import "../scss/mystyle.scss";
 window.addEventListener("DOMContentLoaded", function () {
   // store tabs variables
   // const tabs = document.querySelectorAll("ul.nav-tabs>li");
