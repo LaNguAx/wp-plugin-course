@@ -922,3 +922,81 @@ RECAP: Plugin Structure & Classes as Services
 
   Note how the callback function of the setPages function points towards the new instance of callbacks class inside Admin.php and in there it uses the require_once to print out the template for the admin dashboard. This lets us handle data manipulation before output of content into the page.
 -->
+
+#17a -- Admin Custom Fields
+<!-- 
+  In this lesson, we are going to create custom fields in our admin area.
+
+  Lets create a function inside the SettingsApi class called registerCustomFields(). In that function we can define everything we need for the fields.
+
+  WP handles the field in 3 different actions.
+  1. Register Settings -- Basically imagine a group that contains the settings of your specific custom fields.
+  2. Add settings section -- This generate the settings section that is going to get print within the register setting in a specific page, this action has a callback in order to handle what we're going to print in that page.
+  3. Add settings field -- The actual action that will add the custom field attached to the section and the setting itself.
+
+  <Code>
+    public function registerCustomFields() {
+      // Register_setting
+      register_setting($setting['option_group'], $setting['option_name'], isset($setting['callback']) ? $setting['callback'] : null);
+
+      // Add settings section
+      add_settings_section($section['id'], $section['title'], isset($section['callback']) ? $section['callback'] : null, $section['page']);
+
+      // Add settings field
+      add_settings_field($field['id'], $field['title'], isset($field['callback']) ? $field['callback'] : null, $field['page'], $field['section'], isset($field['args']) ? $field['args'] : null);
+    }
+  </Code>
+
+  Basically we'll be using the same logic to loop through all the settings then generate them using the arguments we give registerCustomFields, same logic exactly as the SettingsApi->addAdminMenu();
+
+  Create the settings fields programmatically.
+
+  <Code>
+    public function registerCustomFields() {
+      foreach ($this->settings as $setting) {
+        // Register_setting
+        register_setting($setting['option_group'], $setting['option_name'], isset($setting['callback']) ? $setting['callback'] : null);
+      }
+
+      foreach ($this->sections as $section) {
+        // Add settings section
+        add_settings_section($section['id'], $section['title'], isset($section['callback']) ? $section['callback'] : null, $section['page']);
+      }
+
+      foreach ($this->fields as $field) {
+        // Add settings field
+        add_settings_field($field['id'], $field['title'], isset($field['callback']) ? $field['callback'] : null, $field['page'], $field['section'], isset($field['args']) ? $field['args'] : null);
+      }
+    }
+  </Code>
+
+  Before we can create the fields we need to create some Setters methods that populates the currently empty variables $this->settings, $this->sections, $this->fields.
+
+  <Code>
+    public function setSettings(array $settings) {
+      $this->settings = $settings;
+      return $this;
+    }
+    public function setSections(array $sections) {
+      $this->sections = $sections;
+      return $this;
+    }
+    public function setFields(array $fields) {
+      $this->fields = $fields;
+      return $this;
+    }
+  </Code>
+
+  Now we need to declare the fields inside our Admin.php. Basically create the data inside Admin.php and then make it work using the SettingsApi.
+-->
+
+#17b -- Admin Custom Fields
+<!-- 
+  In this lesson, we'll continue the how to create more dynamic and modular class to handle generation of custom fields.
+
+-->
+#17c -- Admin Custom Fields
+<!-- 
+  The last part of how to build a custom field in the administration area of WP with our custom plugin.
+  
+-->

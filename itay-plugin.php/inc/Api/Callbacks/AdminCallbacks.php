@@ -22,4 +22,17 @@ class AdminCallbacks extends BaseController {
   public function widgetsManager() {
     return require_once("$this->plugin_path/templates/widgets.php");
   }
+
+  public function itayOptionsGroup($input) {
+    // This callback is a filter function for the input passed by the Settings, create validation for input.
+    return $input;
+  }
+  public function itayAdminSection() {
+    echo 'Check this beautiful section!';
+  }
+
+  public function itayTextExample() {
+    $value = esc_attr(get_option('text_example'));
+    echo '<input type="text" class="regular-text" name="text_example" value="' . $value . '" placeeholder="Write Something Here!" />';
+  }
 }

@@ -11,17 +11,22 @@ class SettingsApi {
   public $admin_pages = array();
   public $admin_subpages = array();
 
+  public $settings = array();
+  public $sections = array();
+  public $fields = array();
+
   public function register() {
-    if (!empty($this->admin_pages)) {
+    if (!empty($this->admin_pages))
       add_action('admin_menu', array($this, 'addAdminMenu'));
-    }
+    if (!empty($this->settings))
+      add_action('admin_init', array($this, 'registerCustomFields'));
   }
 
   public function addPages(array $pages) {
     $this->admin_pages = $pages;
-    // this returning for each method is important for method chaining.
     return $this;
   }
+
 
   public function withSubPage(string $title = null) {
     if (empty($this->admin_pages))
@@ -53,6 +58,37 @@ class SettingsApi {
     }
     foreach ($this->admin_subpages as $subpage) {
       add_submenu_page($subpage['parent_slug'], $subpage['page_title'], $subpage['menu_title'], $subpage['capability'], $subpage['menu_slug'], $subpage['callback']);
+    }
+  }
+
+
+  public function setSettings(array $settings) {
+    $this->settings = $settings;
+    return $this;
+  }
+  public function setSections(array $sections) {
+    $this->sections = $sections;
+    return $this;
+  }
+  public function setFields(array $fields) {
+    $this->fields = $fields;
+    return $this;
+  }
+
+  public function registerCustomFields() {
+    foreach ($this->settings as $setting) {
+      // Register_setting
+      register_setting($setting['option_group'], $setting['option_name'], isset($setting['callback']) ? $setting['callback'] : null);
+    }
+
+    foreach ($this->sections as $section) {
+      // Add settings section
+      add_settings_section($section['id'], $section['title'], isset($section['callback']) ? $section['callback'] : null, $section['page']);
+    }
+
+    foreach ($this->fields as $field) {
+      // Add settings field
+      add_settings_field($field['id'], $field['title'], isset($field['callback']) ? $field['callback'] : null, $field['page'], $field['section'], isset($field['args']) ? $field['args'] : null);
     }
   }
 }
