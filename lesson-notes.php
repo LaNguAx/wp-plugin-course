@@ -1023,5 +1023,80 @@ RECAP: Plugin Structure & Classes as Services
   First lets generate the settings area.
 
   Go into Inc->Admin, lets generate the names of the fields.
+-->
 
+#20 -- iOS toggle in SCSS
+<!-- 
+  In this lesson, we're going to take a look on how to customize our administration area to make the boring checkboxes looking super good with an iOS toggle look.
+
+  Just some SASS changes.
+-->
+
+#21 -- Code Cleanup
+<!-- 
+  In this lesson, we're going to look at how to optimize our code to make it easy to manage on the long run.
+
+  We moved all of our declarations of managers to our BaseController and creating a globally accessible array called managers which contains all our features.
+
+  We simply looped through that array and then added the settings and fields.
+
+  <Code>
+    $this->managers = array(
+      'cpt_manager' => 'Activate CPT Manager',
+      'taxonomy_manager' => 'Activate Taxonomy Manager',
+      'media_widget' => 'Activate Media Widget',
+      'gallery_manager' => 'Activate Gallery Manager',
+      'testimonial_manager' => 'ActivateTestimonial Manager',
+      'templates_manager' => 'Activate Templates Manager',
+      'login_manager' => 'Activate Login Manager',
+      'membership_manager' => 'Activate Membership Manager',
+      'chat_manager' => 'Activate Chat Manager'
+    );
+  </Code>
+
+  <Code>
+    $args = array();
+    foreach ($this->managers as $key => $value) {
+      $args[] =  array(
+        'id' => $key,
+        'title' => $value,
+        'callback' => array($this->callbacks_manager, 'checkboxField'),
+        'page' => 'itay_plugin',
+        'section' => 'itay_admin_index',
+        'args' => array(
+          'label_for' => $key,
+          'class' => 'ui-toggle'
+        ),
+      );
+    }
+  </Code>
+-->
+
+#22 -- Database Optimization
+<!-- 
+  In this lesson, we're going to look at how to optimize DB when we deal with a lot of custom fields.
+
+  The DB converts TRUE to 1 and FALSE to 0.
+
+  WP saves the data in a serialized way. This is a good approach when you have multiple options just to avoid bloating the DB.
+
+  We need to serialize the data saved, otherwise we RISKING slower db 3x.
+
+  The serialized data works in this way:
+  a: Stands for array, then the number of slots in the array.
+  Every slot of data is seperated by a semi column, why it says 3 if we have 6 types of datA?
+
+  In this tutorial we'll convert all of our option fields to one single option field in order to not bloat the DB!
+  Seems like something quite interesting!
+  Serialize the data basically, lets see how we do it.
+
+
+  First we need to access our definition of the settings, and the fields.
+
+  We are creating one single setting for every field, thats why we have every single setting as a different db entry.
+
+  Lets comment the foreach we created and define just one single option name: View code inside Admin->Settings
+
+  Lets start by updating the checkboxField to work with the serialized way of the settings stored.
+  
 -->

@@ -21,12 +21,17 @@ class Admin extends BaseController {
   public $pages = array();
   public $subpages = array();
 
+  public $settings_data;
+
+
   public function register() {
     $this->settings = new SettingsApi();
     $this->callbacks = new AdminCallbacks();
     $this->callbacks_manager = new ManagerCallbacks();
     $this->setPages();
     $this->setSubPages();
+
+    $this->generateSettingsData();
 
     $this->setSettings();
     $this->setSections();
@@ -73,55 +78,79 @@ class Admin extends BaseController {
       ],
     );
   }
+
+  public function generateSettingsData() {
+    $this->settings_data = $this->settings_data = array(
+      array(
+        'setting_name' => 'cpt_manager',
+        'setting_title' => 'Activate CPT Manager'
+      ),
+      array(
+        'setting_name' => 'taxonomy_manager',
+        'setting_title' => 'Activate Taxonomy Manager'
+      ),
+      array(
+        'setting_name' => 'media_widget',
+        'setting_title' => 'Activate Media Widget'
+      ),
+      array(
+        'setting_name' => 'gallery_manager',
+        'setting_title' => 'Activate Gallery Manager'
+      ),
+      array(
+        'setting_name' => 'testimonial_manager',
+        'setting_title' => 'Activate Testimonial Manager'
+      ),
+      array(
+        'setting_name' => 'template_manager',
+        'setting_title' => 'Activate Template Manager'
+      ),
+      array(
+        'setting_name' => 'login_manager',
+        'setting_title' => 'Activate Login Manager'
+      ),
+      array(
+        'setting_name' => 'membership_manager',
+        'setting_title' => 'Activate Membership Manager'
+      ),
+      array(
+        'setting_name' => 'chat_manager',
+        'setting_title' => 'Activate Chat Manager'
+      ),
+    );
+  }
+
   public function setSettings() {
+    // $args = array_map(function ($element) {
+    //   return array(
+    //     'option_group' => 'itay_plugin_settings',
+    //     'option_name' => $element['setting_name'],
+    //     'callback' => array($this->callbacks_manager, 'checkboxSanitize')
+    //   );
+    // }, $this->settings_data);
+    // $this->settings->setSettings($args);
+
+    // Teacher's code
+    // $args = array();
+    // foreach ($this->managers as $key =>  $value) {
+    //   // This [] is to inject a new array inside an array.
+    //   // By doing this we are injecting inside a new slot in the array, if we are not specifying [] we are going to over-ride the array.
+    //   $args[] = array(
+    //     'option_group' => 'itay_plugin_settings',
+    //     'option_name' => $key,
+    //     'callback' => array($this->callbacks_manager, 'checkboxSanitize')
+    //   );
+    // }
+
+    // To insert serialized data we create one entry and populate it using serialized data.
     $args = array(
-      array(
-        'option_group' => 'itay_plugin_settings',
-        'option_name' => 'cpt_manager',
-        'callback' => array($this->callbacks_manager, 'checkboxSanitize')
-      ),
-      array(
-        'option_group' => 'itay_plugin_settings',
-        'option_name' => 'taxonomy_manager',
-        'callback' => array($this->callbacks_manager, 'checkboxSanitize')
-      ), array(
-        'option_group' => 'itay_plugin_settings',
-        'option_name' => 'media_widget',
-        'callback' => array($this->callbacks_manager, 'checkboxSanitize')
-      ),
-      array(
-        'option_group' => 'itay_plugin_settings',
-        'option_name' => 'gallery_manager',
-        'callback' => array($this->callbacks_manager, 'checkboxSanitize')
-      ),
-      array(
-        'option_group' => 'itay_plugin_settings',
-        'option_name' => 'testimonial_manager',
-        'callback' => array($this->callbacks_manager, 'checkboxSanitize')
-      ),
-      array(
-        'option_group' => 'itay_plugin_settings',
-        'option_name' => 'template_manager',
-        'callback' => array($this->callbacks_manager, 'checkboxSanitize')
-      ),
-      array(
-        'option_group' => 'itay_plugin_settings',
-        'option_name' => 'login_manager',
-        'callback' => array($this->callbacks_manager, 'checkboxSanitize')
-      ),
-      array(
-        'option_group' => 'itay_plugin_settings',
-        'option_name' => 'membership_manager',
-        'callback' => array($this->callbacks_manager, 'checkboxSanitize')
-      ),
-      array(
-        'option_group' => 'itay_plugin_settings',
-        'option_name' => 'chat_manager',
-        'callback' => array($this->callbacks_manager, 'checkboxSanitize')
-      ),
+      'option_group' => 'itay_plugin_settings',
+      'option_name' => 'itay_plugin',
+      'callback' => array($this->callbacks_manager, 'checkboxSanitize')
     );
     $this->settings->setSettings($args);
   }
+
   public function setSections() {
     $args = array(
       array(
@@ -133,109 +162,38 @@ class Admin extends BaseController {
     );
     $this->settings->setSections($args);
   }
-  public function setFields() {
-    $args = array(
-      array(
-        'id' => 'cpt_manager',
-        'title' => 'Activate CPT Manager',
-        'callback' => array($this->callbacks_manager, 'checkboxField'),
-        'page' => 'itay_plugin',
-        'section' => 'itay_admin_index',
-        'args' => array(
-          'label_for' => 'cpt_manager',
-          'class' => 'ui-toggle'
-        ),
-      ),
-      array(
-        'id' => 'taxonomy_manager',
-        'title' => 'Activate Taxonomy Manager',
-        'callback' => array($this->callbacks_manager, 'checkboxField'),
-        'page' => 'itay_plugin',
-        'section' => 'itay_admin_index',
-        'args' => array(
-          'label_for' => 'taxonomy_manager',
-          'class' => 'ui-toggle'
-        ),
-      ),
-      array(
-        'id' => 'media_widget',
-        'title' => 'Activate Media Widget',
-        'callback' => array($this->callbacks_manager, 'checkboxField'),
-        'page' => 'itay_plugin',
-        'section' => 'itay_admin_index',
-        'args' => array(
-          'label_for' => 'media_widget',
-          'class' => 'ui-toggle'
-        )
-      ),
-      array(
-        'id' => 'gallery_manager',
-        'title' => 'Activate Gallery Manager',
-        'callback' => array($this->callbacks_manager, 'checkboxField'),
-        'page' => 'itay_plugin',
-        'section' => 'itay_admin_index',
-        'args' => array(
-          'label_for' => 'gallery_manager',
-          'class' => 'ui-toggle'
-        ),
-      ),
-      array(
-        'id' => 'testimonial_manager',
-        'title' => 'Activate Testimonial Manager',
-        'callback' => array($this->callbacks_manager, 'checkboxField'),
-        'page' => 'itay_plugin',
-        'section' => 'itay_admin_index',
-        'args' => array(
-          'label_for' => 'testimonial_manager',
-          'class' => 'ui-toggle'
-        ),
-      ),
-      array(
-        'id' => 'templates_manager',
-        'title' => 'Activate Templates Manager',
-        'callback' => array($this->callbacks_manager, 'checkboxField'),
-        'page' => 'itay_plugin',
-        'section' => 'itay_admin_index',
-        'args' => array(
-          'label_for' => 'templates_manager',
-          'class' => 'ui-toggle'
-        ),
-      ),
-      array(
-        'id' => 'login_manager',
-        'title' => 'Activate Login Manager',
-        'callback' => array($this->callbacks_manager, 'checkboxField'),
-        'page' => 'itay_plugin',
-        'section' => 'itay_admin_index',
-        'args' => array(
-          'label_for' => 'login_manager',
-          'class' => 'ui-toggle'
-        ),
-      ),
-      array(
-        'id' => 'membership_manager',
-        'title' => 'Activate Membership Manager',
-        'callback' => array($this->callbacks_manager, 'checkboxField'),
-        'page' => 'itay_plugin',
-        'section' => 'itay_admin_index',
-        'args' => array(
-          'label_for' => 'membership_manager',
-          'class' => 'ui-toggle'
-        ),
-      ),
-      array(
-        'id' => 'chat_manager',
-        'title' => 'Activate Chat Manager',
-        'callback' => array($this->callbacks_manager, 'checkboxField'),
-        'page' => 'itay_plugin',
-        'section' => 'itay_admin_index',
-        'args' => array(
-          'label_for' => 'chat_manager',
-          'class' => 'ui-toggle'
-        ),
-      ),
 
-    );
+  public function setFields() {
+    // $argss = array_map(function ($element) {
+    //   return  array(
+    //     'id' => $element['setting_name'],
+    //     'title' => $element['setting_title'],
+    //     'callback' => array($this->callbacks_manager, 'checkboxField'),
+    //     'page' => 'itay_plugin',
+    //     'section' => 'itay_admin_index',
+    //     'args' => array(
+    //       'label_for' => $element['setting_name'],
+    //       'class' => 'ui-toggle'
+    //     ),
+    //   );
+    // }, $this->settings_data);
+    // Teacher's code
+    $args = array();
+    foreach ($this->managers as $key => $value) {
+      $args[] =  array(
+        'id' => $key,
+        'title' => $value,
+        'callback' => array($this->callbacks_manager, 'checkboxField'),
+        'page' => 'itay_plugin',
+        'section' => 'itay_admin_index',
+        'args' => array(
+          'option_name' => 'itay_plugin',
+          'label_for' => $key,
+          'class' => 'ui-toggle',
+        ),
+      );
+    }
+
     $this->settings->setFields($args);
   }
 }

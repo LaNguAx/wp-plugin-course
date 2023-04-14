@@ -76,10 +76,8 @@ class SettingsApi {
   }
 
   public function registerCustomFields() {
-    foreach ($this->settings as $setting) {
-      // Register_setting
-      register_setting($setting['option_group'], $setting['option_name'], isset($setting['callback']) ? $setting['callback'] : null);
-    }
+    // Register_setting
+    register_setting($this->settings['option_group'], $this->settings['option_name'], isset($this->settings['callback']) ? $this->settings['callback'] : null);
 
     foreach ($this->sections as $section) {
       // Add settings section
@@ -88,7 +86,7 @@ class SettingsApi {
 
     foreach ($this->fields as $field) {
       // Add settings field
-      add_settings_field($field['id'], $field['title'], isset($field['callback']) ? $field['callback'] : null, $field['page'], $field['section'], isset($field['args']) ? $field['args'] : null);
+      add_settings_field($field['id'], $field['title'], isset($field['callback']) ? $field['callback'] : null, $field['page'], $field['section'], isset($field['args']) ? $field['args'] : '');
     }
   }
 }
