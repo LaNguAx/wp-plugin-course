@@ -30,4 +30,9 @@ class BaseController {
       'chat_manager' => 'Activate Chat Manager'
     );
   }
+  public function managerActive(string $manager_name) {
+    $option = get_option('itay_plugin');
+    $activated = isset($option[$manager_name]) ?  $option[$manager_name] : false;
+    return $activated;
+  }
 }

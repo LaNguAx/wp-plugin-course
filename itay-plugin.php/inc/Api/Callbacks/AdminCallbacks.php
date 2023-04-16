@@ -22,6 +22,24 @@ class AdminCallbacks extends BaseController {
   public function widgetsManager() {
     return require_once("$this->plugin_path/templates/widgets.php");
   }
+  public function galleryManager() {
+    return require_once("$this->plugin_path/templates/gallery.php");
+  }
+  public function testimonialManager() {
+    return require_once("$this->plugin_path/templates/testimonial.php");
+  }
+  public function templatesManager() {
+    return require_once("$this->plugin_path/templates/template.php");
+  }
+  public function loginManager() {
+    return require_once("$this->plugin_path/templates/login.php");
+  }
+  public function membershipManager() {
+    return require_once("$this->plugin_path/templates/membership.php");
+  }
+  public function chatManager() {
+    return require_once("$this->plugin_path/templates/chat.php");
+  }
 
   public function itayOptionsGroup($input) {
     // This callback is a filter function for the input passed by the Settings, create validation for input.

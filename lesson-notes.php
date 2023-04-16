@@ -1098,5 +1098,77 @@ RECAP: Plugin Structure & Classes as Services
   Lets comment the foreach we created and define just one single option name: View code inside Admin->Settings
 
   Lets start by updating the checkboxField to work with the serialized way of the settings stored.
+
+  ---- Read from here
+  Basically instead of saving each manager as a DB entry we save them all in an array inside a db key called itay_plugin, WP then serializes that data that we store into something like this: a:9:{s:11:"cpt_manager";b:0;s:16:"taxonomy_manager";b:0;s:12:"media_widget";b:0;s:15:"gallery_manager";b:0;s:19:"testimonial_manager";b:0;s:17:"templates_manager";b:0;s:13:"login_manager";b:0;s:18:"membership_manager";b:0;s:12:"chat_manager";b:0;}
+
+  Then we can access that array by using get_option('itay_plugin') and then we can access each value of the array keys using their key name by doing $arr['taxonomy_manager'].
   
+  You basically need to save the array keys somewhere(we saved them in the extended class BaseController) and using that we can read the data from the db using the example above.
+
+  Here's the code to make it work:
+  <Code>
+    public function checkboxField($args) {
+      $name = $args['label_for'];
+      $classes = $args['class'];
+      $checkbox = json_decode(get_option($args['option_name']), true);
+
+      echo '<div class="' . $classes . '"><input type="checkbox" id="' . $name . '" name="' . $args['option_name'] . '[' . $name . ']" value="1"' . (isset($checkbox[$name]) && $checkbox[$name] ? 'checked' : '') . '/><label for="' . $name . '"><div></div></label></div>';
+    }
+  </Code>
+
+  This is the code for the db save: Please note how we get the $input array passed by wp, it contains the values for the checkboxes, it does all the logic by itself. Whenever we press 'Save Changes' the data that gets passed into $input is the data saved in the db, so we can manipulate it there.
+
+  <Code>
+    public function checkboxSanitize($input) {
+
+      $output = array();
+      // In this loop we need to check if the input inside itself has a key that is equal to $key.
+      foreach ($this->managers as $key => $value) {
+        $output[$key] = (isset($input[$key]) and $input[$key] == 1) ? true : false;
+      }
+      return $input;
+    }
+  </Code>
+    
+  Please note that it's also valid to simply return the $input and it'll work the same.
+-->
+
+#23 -- Save Default Options on Activate
+<!-- 
+  In this lesson we're going to learn WHY it's important to save default options and HOW to do it.
+
+  Whenever we update the DB and there's no default value it could cause issues. So we create that db data in the onActivate() function of the plugin and that fixes it.
+
+  We should always simulate a clean slate when checking our plugin.
+  <Code>
+    public static function activate() {
+      flush_rewrite_rules();
+      if (get_option('itay_plugin')) return;
+
+      $default = array();
+      update_option('itay_plugin', $default);
+    }
+  </Code>
+-->
+
+#24 -- Create Modular Plugin Sections
+<!-- 
+  In this lesson we're going to look on how to make our activation/deactivation way more modular and manageable.
+
+  Right now we've just defined an admin dashboard where we can activate/deactivate all the features.
+
+  Currently they're only being saved but not doing anything.
+  We're going to create a controller for the CPT manager that'll handle wether we should output the content for cpt manager or not.
+
+  Lets rename Admin class to Dashboard.
+  Now lets create a new class called CustomPostTypeController that'll handle the activation of it.
+
+
+  In summary we create a controller for each feature of the plugin that'll handle it's menu generation using the SettingsApi we created, and it'll handle the code for it, the template of it and all of the other data. Please view the newly created files of the controllers.
+
+  
+
+
+
 -->

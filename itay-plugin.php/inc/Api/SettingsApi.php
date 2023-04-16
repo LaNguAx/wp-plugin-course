@@ -16,7 +16,7 @@ class SettingsApi {
   public $fields = array();
 
   public function register() {
-    if (!empty($this->admin_pages))
+    if (!empty($this->admin_pages) || !empty($this->admin_subpages))
       add_action('admin_menu', array($this, 'addAdminMenu'));
     if (!empty($this->settings))
       add_action('admin_init', array($this, 'registerCustomFields'));
@@ -43,7 +43,7 @@ class SettingsApi {
         'callback' => $admin_page['callback'],
       ],
     );
-    $this->admin_subpages = $subpage;
+    $this->admin_subpages = array_merge($this->admin_subpages, $subpage);
     return $this;
   }
 
@@ -60,8 +60,6 @@ class SettingsApi {
       add_submenu_page($subpage['parent_slug'], $subpage['page_title'], $subpage['menu_title'], $subpage['capability'], $subpage['menu_slug'], $subpage['callback']);
     }
   }
-
-
   public function setSettings(array $settings) {
     $this->settings = $settings;
     return $this;

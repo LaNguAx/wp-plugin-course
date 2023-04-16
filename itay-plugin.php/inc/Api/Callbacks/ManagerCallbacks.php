@@ -11,13 +11,13 @@ use \Inc\Base\BaseController;
 
 class ManagerCallbacks extends BaseController {
   public function checkboxSanitize($input) {
-    $output = array();
 
+    $output = array();
     // In this loop we need to check if the input inside itself has a key that is equal to $key.
     foreach ($this->managers as $key => $value) {
-      $output[$key] = isset($input[$key]) and $input[$key] == 1 ? true : false;
+      $output[$key] = (isset($input[$key]) and $input[$key] == 1) ? true : false;
     }
-    return $output;
+    return $input;
   }
   public function adminSectionManager() {
     echo 'Manage the Sections and Features of this plugin by activating the checkboxes from the following list.';
@@ -26,9 +26,7 @@ class ManagerCallbacks extends BaseController {
     $name = $args['label_for'];
     $classes = $args['class'];
     $checkbox = get_option($args['option_name']);
-    // fix this
-    // if (!isset($checkbox)) update_option('itay_plugin', array());
 
-    echo '<div class="' . $classes . '"><input type="checkbox" id="' . $name . '" name="' . $args['option_name'] . '[' . $name . ']" value="1"' . ((isset($checkbox[$name]) and $checkbox[$name]) ? 'checked' : '') . '/><label for="' . $name . '"><div></div></label></div>';
+    echo '<div class="' . $classes . '"><input type="checkbox" id="' . $name . '" name="' . $args['option_name'] . '[' . $name . ']" value="1"' . (isset($checkbox[$name]) && $checkbox[$name] ? 'checked' : '') . '/><label for="' . $name . '"><div></div></label></div>';
   }
 }
