@@ -1227,4 +1227,76 @@ RECAP: Plugin Structure & Classes as Services
   Amazing.
 -->
 
-#28 --
+#28 -- Custom Post Types Admin Section
+<!-- 
+  In this lesson we're going to take a look at extending our CPT manager to list all the post types we created, to edit, delete them.
+
+  Lets have the tab seperation in order to seperate between the functionalities of the cpt manager.
+  Lets copy the code from admin.php template to cpt.php template.
+
+  Here we simply fetched the data from the db and printed it in the template file.
+-->
+
+#29 -- Bug Fixes
+<!-- 
+  In this video we're going to take a look on a lot of bugs while developing.
+
+  To do that we need a clean slate, so lets delete the itay_plugin_cpt.
+  First bug is the foreach loop, it cannot start because we don't have any data to loop into it.
+
+  It's really important to debug the code and once in a while start debugging it from the start, remove everything and activate the plugin.
+
+  Don't assume that the plugin works out of the box even though it currently works for us because sometimes we can work with existing data.
+-->
+
+#30 -- How to Delete a Custom Post Type
+<!-- 
+  In this lesson we're going to take a look on how to delete our custom post type.
+
+  WP by default doesn't come with an option to delete a record inside an array inside an option entry in the db.
+
+  WP offers us 3 methods to interact in the options api.
+  It comes with get_option, update_option, delete_option.
+  We don't want delete_option, we want to update_option and delete the specific post type we want.
+
+  Lets go into cpt.php, here for Delete button instead of a simple link, we're going to submit a form that'll be IDENTITCAL to the current options with the settings field.
+
+  Which means it'll send the request to that specific setting.
+
+  So we are going to switch the Delete <a> element we created for a form in that position that is associated with our cpt_settings, that means whenever we press the delete button, the cptSanitize callback method will occur and there we perform a check to see wether or not the button needs to be deleted or not.
+
+  We can do it using multiple different ways, but the best way is to simply use the built-in method of WP and add a hidden input element to the form that contains the data of the about to be deleted element and then in the cptSanitize method we perform the check and the deletion which is just removing from the array and returning a new array.
+  Please note that we are accessing the POST request from the cptSanitize method and not the $input because the $input is empty since we're not passing any data that is related to WP settings fields but we are passing data in the post request that reaches the cptSanitize method.
+  
+  Great solution and easy really.
+
+  Here's the code:
+  The form for the delete button:
+  <Code>
+    echo '<form method="post" action="options.php" class="inline-block">';
+    settings_fields('itay_plugin_settings_cpt');
+    echo '<input type="hidden" name="remove" value="' . $options['post_type'] . '">';
+    submit_button('Delete', 'delete small', 'submit', false, array(
+    'onclick' => 'return confirm("Are you sure you want to delete this Custom Post Type? The data associated with it will not be deleted.");'
+     ));
+    echo '</form></td></tr>';
+  </Code>
+
+  The callback sanitization method for the deletion of the CPT:
+  <Code>
+    public function cptSanitize($input) {
+      $output = get_option('itay_plugin_cpt');
+      // Remove record from array
+      if (isset($_POST['remove'])) {
+        unset($output[$_POST['remove']]);
+
+        return $output;
+    }
+  </Code>
+-->
+
+#31 -- How to Edit a Custom Post Type
+<!-- 
+
+
+-->

@@ -14,19 +14,32 @@ class CptCallbacks {
 
     $output = get_option('itay_plugin_cpt');
 
+    // Remove record from array
+    if (isset($_POST['remove'])) {
+      unset($output[$_POST['remove']]);
+
+      return $output;
+    }
+    // var_dump($_POST);
+    // die();
+
+
+    if (!$output || count($output) == 0) {
+      $output[$input['post_type']] = $input;
+      return $output;
+    }
+
     foreach ($output as $type) {
       if ($input['post_type'] !== $type) {
         $output[$input['post_type']] = $input;
       }
     }
 
-    // print('<pre>' . print_r($output, true) . '</pre>');
-    // die();
     return $output;
   }
 
   public function cptSectionManager() {
-    echo 'Manage your custom post types';
+    echo 'Create as many Custom Post Types as you want';
   }
 
   public function textField($args) {
@@ -36,7 +49,7 @@ class CptCallbacks {
     $input = get_option($option_name);
     // $value = $input[$name];
 
-    echo '<input type="text" class="regular-text" name="' . $args['option_name'] . '[' . $name . ']" value="" placeholder="' . $args['placeholder'] . '"';
+    echo '<input type="text" class="regular-text" name="' . $args['option_name'] . '[' . $name . ']" value="" placeholder="' . $args['placeholder'] . '" required>';
   }
 
 

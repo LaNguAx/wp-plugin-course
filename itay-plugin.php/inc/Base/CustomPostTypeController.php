@@ -20,10 +20,6 @@ class CustomPostTypeController extends BaseController {
   public $custom_post_types = array();
 
   public function register() {
-
-    // $option = get_option('itay_plugin');
-    // $activated = isset($option['cpt_manager']) ? $option['cpt_manager'] : false;
-    // if (!$activated) return;
     if (!$this->managerActive('cpt_manager')) return;
 
     $this->settings = new SettingsApi();
@@ -60,7 +56,7 @@ class CustomPostTypeController extends BaseController {
   public function setSettings() {
     // To insert serialized data we create one entry and populate it using serialized data.
     $args = array(
-      'option_group' => 'itay_plugin_cpt_settings',
+      'option_group' => 'itay_plugin_settings_cpt',
       'option_name' => 'itay_plugin_cpt',
       'callback' => array($this->cpt_callbacks, 'cptSanitize')
     );
@@ -185,14 +181,14 @@ class CustomPostTypeController extends BaseController {
         'supports'              => array('title', 'editor', 'thumbnail'),
         'taxonomies'            => array('category', 'post_tag'),
         'hierarchical'          => false,
-        'public'                => $options['public'],
+        'public'                => isset($options['public']) ?: false,
         'show_ui'               => true,
         'show_in_menu'          => true,
         'menu_position'         => 5,
         'show_in_admin_bar'     => true,
         'show_in_nav_menus'     => true,
         'can_export'            => true,
-        'has_archive'           => $options['has_archive'],
+        'has_archive'           => isset($options['has_archive']) ?: false,
         'exclude_from_search'   => false,
         'publicly_queryable'    => true,
         'capability_type'       => 'post'
