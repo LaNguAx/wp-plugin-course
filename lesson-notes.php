@@ -1166,9 +1166,65 @@ RECAP: Plugin Structure & Classes as Services
 
 
   In summary we create a controller for each feature of the plugin that'll handle it's menu generation using the SettingsApi we created, and it'll handle the code for it, the template of it and all of the other data. Please view the newly created files of the controllers.
-
-  
-
-
-
 -->
+
+#25 -- Modular Custom Post Types
+<!-- 
+  In this we learned how to create the custom post types in a modular way.
+
+  Meaning we create a public class variable inside the postypeController class that consists of the post types we'd like to create and then we simply loop through them.
+
+  Now I assume in the future we'll have those post types stored in the db by the user and then that variable will be filled with get_option from the db and then we'd create the post types using the already created registerpostytypes method inside the posttypecontroller class.
+
+  Pretty beautiful way to create one code for many many things.
+-->
+
+#26a -- Modular Custom Post Types
+<!-- 
+  In this lesson we're going to take a look on how to generate dynamically our CPT thanks to the settingsApi.
+  Basically we're going to code the CPT page to have the ability to add how many CPTs we want, and automatically save them into the db after pressing saveChanges and then generating them automatically in the sidebar.
+
+  So now we need to store the data in the db and populate custom_post_types with the data. 
+
+  We need to create a new callback file so we can manage the callbacks just for the CPTs.
+
+  We also generated the custom post type by themselves all the attributes they need for generation.
+-->
+
+#27 -- Store Arrays in WP_Options
+<!-- 
+  In this lesson we're going to take a look on how to geneerate multiple custom post types with the current functionality we have right now, becausae in the prev lesson we encountered an issue where each time we created a new cpt it over-writes the previous one and not adds to it.
+
+  We need to store the information about the CPT in a multidimensional array in a subarray that has the key as the cpt name and the value as the attributes array.
+
+  This was a really important lesson because we learned that in order to save the settings, we need to intercept their saving in the cptSanitize callback, which is the method that 'filters' the data before it enters the DB. 
+
+  We perform an action there to set the $input array received to a new array which has $input['post_type'] as key and $input arr as value.
+
+  Then we check for wether or not $input['post_type'] already exists in the db by fetching the data using get_options and storing it inside $output array.
+
+  Really simple way of determining wether or not the data should be updated. 
+
+  This is great for the upsell plugin I want because I learned how to store the data of all the categories in one multidimensional array basically which is amazing.
+
+  View code here:
+  Sanitization before entering the db:
+  <Code>
+    public function cptSanitize($input) {
+      $output = get_option('itay_plugin_cpt');
+      foreach ($output as $type) {
+        if ($input['post_type'] !== $type) {
+          $output[$input['post_type']] = $input;
+        }
+      }
+      return $output;
+    }
+  </Code>
+
+  To summarize:
+  In order to differentiate between the data we need to manipulate it and store it inside another array which has each cell for each post type and that cell key has to be assigned to a unique value that'll allow us to perform future checks.
+
+  Amazing.
+-->
+
+#28 --
