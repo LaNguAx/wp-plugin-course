@@ -1297,6 +1297,66 @@ RECAP: Plugin Structure & Classes as Services
 
 #31 -- How to Edit a Custom Post Type
 <!-- 
+  In this lesson, we're going to edit a CPT.
+  This is a pretty amazing lesson, I'm writing the summary here:
+  In order to edit a post we need to create a form button that'll send a $_POST request to the same URL but send some data in $_POST request.
+  
+  Inside the form we make the Edit button as the save_button() element by changing it's attributes. Then whenever we press the edit button, the form will send a post request and we can access it using the cptSanitize callback method.
 
+  Each time the current url setting refresh (in this case itay_cpt) the cptSanitize method is being run. So when we send a request method to the current page we can check within the cptSanitize method for each if the $_POST object contains a variable called 'edit_post' and then we make the page's first render appear on the Edit Custom Post Type tab. p.s. You send that variable using a hidden input field, view code below for how the data gets passed into $_POST using a hidden input field.
+
+  This is literally amazing, because of the SSR we check wether or not a specific variable exists and if it does then we render the page accordingly, I guess this is the true power of php.
+
+  We send new data about the state of the current user which is that he's trying to edit the post and then we re-render the page accordingly.
+
+  Then inside the cptSanitize method we have a logic that checks wether or not the $input received by the form of adding a custom post type is the same as one of the currently available CPTs in the db, and if so, then that means that it needs to be updated, so the new value is replaced with the old value in $output array and then it's returned.
+
+  View code here:
+  <Code>
+    Button form element amazing logic:
+
+    echo '<form method="post" action="" class="inline-block">';
+    echo '<input type="hidden" name="edit_post" value="' . $options['post_type'] . '">';
+    submit_button('Edit', 'primary small', 'submit', false);
+    echo '</form> ';
+  </Code>
+
+  <Code>
+    Editing Logic in cptSanitize:
+      
+      if ($input['post_type'] == $type) {
+        $output['post_type'] = $input;
+      }
+  </Code>
+  Basically all the editing logic does is check wether or not the post_type received by the $input exists inside the $output array which is the data fetched from the db which inside the foreach loop, each element of it referenced as $type.
+
+  It checks if 'post_type'FROM INPUT === 'post_type'FROM DB.
+  And if so then it sets the $output that's supposed to be returned where they KEY is the same as the KEY of the $input received ($input['post_type'] == $type) and sets it to the new $input received:
+  <Code>
+    $output['post_type'] = $input;
+  </Code> 
+
+  The foreach loop I stated above isn't really required because the code: $output['post_type'] = $input; handles all the logic for adding a cell in the array or updating it.
+
+  View the full code here that I changed to make it work without loops here:
+    public function cptSanitize($input) {
+    $output = get_option('itay_plugin_cpt');
+
+    // Remove CPT using POST Request
+    if (isset($_POST['remove'])) {
+      unset($output[$_POST['remove']]);
+      return $output;
+    }
+
+    // Add CPT $output is length 0 
+    if (!$output) {
+      $output  = array($input['post_type'] => $input);
+      return $output;
+    }
+
+    // Add or Edit a CPT
+    $output[$input['post_type']] = $input;
+    return $output;
+  }
 
 -->
