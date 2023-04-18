@@ -18,5 +18,8 @@ class Activate {
     if (!get_option('itay_plugin_cpt')) {
       update_option('itay_plugin_cpt', $default);
     }
+    if (!get_option('itay_plugin_tax')) {
+      update_option('itay_plugin_tax', $default);
+    }
   }
 }

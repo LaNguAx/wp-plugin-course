@@ -1358,5 +1358,42 @@ RECAP: Plugin Structure & Classes as Services
     $output[$input['post_type']] = $input;
     return $output;
   }
+-->
+
+#32 -- Export PHP with Code Prettify
+<!-- 
+  In this lesson we're going to look at how to automatically generate all the CPTs we generated.
+
+  We want to generate a the code for export and not in excel like I thought, thats what we want to achieve.
+
+  It uses code-prettify npm package.
+  We can use it using the CDN by adding the script inside the head.
+
+  But we don't use a CDN just for one JS file, we want everything inside the own plugin.
+
+  We'll use NPM.
+  After we downloaded it we need to import it in our js source file, so that it'd work.
+
+  In order to use it we can import it dynamically using es6.
+  View how to do it:
+  <Code>
+    import "code-prettify";
+    @import "../../../node_modules/code-prettify/styles/desert.css";
+  </Code>
+-->
+
+#33 -- Create a Custom Taxonomy Manager
+<!-- 
+  In this lesson, we're going to take a look on how to build a custom taxonomy manager. ALl the things we have to do are identitical for the CPT manager.
+
+  We'll change some core functionalities but it's really similiar.
+
+
+
+-->
+
+#34 -- Create a Custom Taxonomy Manager Part 2
+<!-- 
+  We'll continue working 
 
 -->

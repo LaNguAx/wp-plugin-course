@@ -11,5 +11,8 @@
   "license": "ISC",
   "devDependencies": {
     "@wordpress/scripts": "^26.2.0"
+  },
+  "dependencies": {
+    "code-prettify": "^0.1.0"
   }
 }

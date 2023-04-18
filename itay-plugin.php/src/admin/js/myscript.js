@@ -1,16 +1,7 @@
 import "../scss/mystyle.scss";
+import "code-prettify";
 window.addEventListener("DOMContentLoaded", function () {
-  // store tabs variables
-  // const tabs = document.querySelectorAll("ul.nav-tabs>li");
-  // tabs.forEach((tab) => {
-  //   tab.addEventListener("click", function (e) {
-  //     e.preventDefault();
-  //     tabs.forEach((tabb) => tabb.classList.remove("active"));
-  //     tab.classList.add("active");
-  //     const target = e.target;
-  //     const targetPaneID = target.getAttribute('href');
-  //   });
-  // });
+  PR.prettyPrint();
 
   const navTabContainer = document.querySelector(".nav.nav-tabs");
   if (navTabContainer) {
