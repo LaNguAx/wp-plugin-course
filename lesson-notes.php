@@ -1503,8 +1503,35 @@ SUMMARIZE:
 
 #36 -- Create a Custom Widget
 <!-- 
-  In this lesson:
-  
+  In this lesson: We'll learn how to generate our first custom widget in the plugin.
+  In the current lesson we'll set up a really small widget, to set it up and have a regular widget with just text.
+  In the next lesson we'll learn how to properly integrate the media uploader.
 
+  In order to generate a widget we need to extend the WP_Widget class.
+
+  Lets create a widgets folder inside the API folder, because it's an API, create a new file called MediaWidget.php.
+  Now lets copy everything from mediawidgetcontroller to mediawidget.php and change the namespace and the class name.
+
+  In order to create a widget, the WP docs say we need to extend our class using the WP_Widget class.
+  <Code>
+    class MediaWidget extends WP_Widget {
+    }
+  </Code>
+
+  -->
+I Skipped the media widgets because it's irrelevant for 2023, there are gutenberg blocks.
+<!-- -->
+
+
+#38 -- Testimonial Manager Part 1
+<!-- 
+    Lets access testimonial controller and remove all the methods except the initialization check.
+
+    In this lesson we simply created the custom post type for the testimonials, that it.
+-->
+
+#39 -- Testimonial Manager Part 2
+<!-- 
+  In this lesson, we
 
 -->

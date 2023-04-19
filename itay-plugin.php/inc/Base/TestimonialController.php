@@ -17,24 +17,24 @@ class TestimonialController extends BaseController {
 
   public function register() {
     if (!$this->managerActive('testimonial_manager')) return;
-
-    $this->settings = new SettingsApi();
-    $this->callbacks = new AdminCallbacks();
-
-    $this->setSubpage();
-    $this->settings->addSubPages($this->subpage)->register();
+    add_action('init', array($this, 'testimonial_cpt'));
   }
-
-  public function setSubpage() {
-    $this->subpage = array(
-      [
-        'parent_slug' => 'itay_plugin',
-        'page_title' => 'Testimonial Manager',
-        'menu_title' => 'Testimonial Manager',
-        'capability' => 'manage_options',
-        'menu_slug' => 'itay_testimonials',
-        'callback' => array($this->callbacks, 'testimonialManager')
-      ]
+  public function testimonial_cpt() {
+    $labels = array(
+      'name' => 'Testimonials',
+      'singular_name' => 'testimonial'
     );
+
+    $args = array(
+      'labels' => $labels,
+      'public' => true,
+      'has_archive' => false,
+      'menu_icon' => 'dashicons-testimonial',
+      'exclude_from_search' => true,
+      'publicly_queryable' => false,
+      'supports' => array('title', 'editor')
+    );
+
+    register_post_type('testimonial', $args);
   }
 }
