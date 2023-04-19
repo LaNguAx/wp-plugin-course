@@ -13,8 +13,6 @@ class TaxonomyCallbacks {
   public function taxSanitize($input) {
 
     $output = get_option('itay_plugin_tax');
-    print('<pre>' . print_r($input, true) . '</pre>');
-    die();
     // Remove record from array
     if (isset($_POST['remove'])) {
       unset($output[$_POST['remove']]);
