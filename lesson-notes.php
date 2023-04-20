@@ -1532,6 +1532,201 @@ I Skipped the media widgets because it's irrelevant for 2023, there are gutenber
 
 #39 -- Testimonial Manager Part 2
 <!-- 
-  In this lesson, we
+  In this lesson, we'll add extra metaboxes to have the option to store the name of the user, the email and add those extra options to manage the testimonials.
+
+  Lets add the options as a metabox.
+
+-->
+
+#40 -- Testimonial Manager Part 3
+<!--
+-->
+
+Testimonial Summary:
+<!-- 
+  I want to summarize the creation of the metabox for a CPT.
+  We add a metabox using the add_meta_box function and specify all the arguments there, then we create the render method for it and then we have a sanitization filter method that validates all the data passed through the metabox's input elements and stores it in the db.
+  It's quite  a simple concept actually.
+
+  View code here:
+  <Code>
+      public function register() {
+    if (!$this->managerActive('testimonial_manager')) return;
+    add_action('init', array($this, 'testimonial_cpt'));
+    add_action('add_meta_boxes', array($this, 'add_meta_boxes'));
+    add_action('save_post', array($this, 'save_meta_box'));
+  }
+  public function testimonial_cpt() {
+    $labels = array(
+      'name' => 'Testimonials',
+      'singular_name' => 'testimonial'
+    );
+
+    $args = array(
+      'labels' => $labels,
+      'public' => true,
+      'has_archive' => false,
+      'menu_icon' => 'dashicons-testimonial',
+      'exclude_from_search' => true,
+      'publicly_queryable' => false,
+      'supports' => array('title', 'editor'),
+    );
+
+    register_post_type('testimonial', $args);
+  }
+
+  public function add_meta_boxes() {
+    add_meta_box('testimonial_options', 'Testimonial Options', array($this, 'render_features_box'), 'testimonial', 'side', 'default');
+  }
+  public function render_features_box($post) {
+    wp_nonce_field('itay_testimonial_options', 'itay_testimonial_options_nonce');
+    $data = get_post_meta($post->ID, 'testimonial_options', true);
+?>
+    <label for="itay_testimonial_author">Testimonial Author</label>
+    <input type="text" name="itay_testimonial_author" id="itay_testimonial_author" value="<? php // echo esc_attr((isset($data['name']) ? $data['name']  : '')) 
+                                                                                          ?>">
+
+    <br>
+
+    <label for="itay_testimonial_email">Testimonial Email</label>
+    <input type="text" name="itay_testimonial_email" id="itay_testimonial_email" value="<? php // echo esc_attr((isset($data['email']) ? $data['email']  : '')) 
+                                                                                        ?>">
+
+    <br>
+
+    <label for="itay_testimonial_approved">Testimonial Approved</label>
+    <input type="checkbox" name="itay_testimonial_approved" id="approved" value="1" <? php // echo esc_attr((isset($data['approved'])  && $data['approved'] == 1  ? 'checked'  : '')) 
+                                                                                    ?>>
+
+    <br>
+
+    <label for="itay_testimonial_featured">Testimonial Featured</label>
+    <input type="checkbox" name="itay_testimonial_featured" id="featured" value="1" <? php // echo esc_attr((isset($data['featured']) && $data['featured'] == 1 ? 'checked'  : '')) 
+                                                                                    ?>>
+<? php //
+// }
+//public function save_meta_box($post_id) {
+// if (!isset($_POST['itay_testimonial_options_nonce']))
+//   return $post_id;
+
+//   $nonce = $_POST['itay_testimonial_options_nonce'];
+//   if (!wp_verify_nonce($nonce, 'itay_testimonial_options')) {
+//     return $post_id;
+//   }
+
+//   if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+//     return $post_id;
+//   }
+
+//   if (!current_user_can('edit_post', $post_id)) {
+//     return $post_id;
+//   }
+
+
+//   $meta_inputs = array(
+//     'name' => sanitize_text_field($_POST['itay_testimonial_author']),
+//     'email' => sanitize_text_field($_POST['itay_testimonial_email']),
+//     'approved' => isset($_POST['itay_testimonial_approved']) ? 1 : 0,
+//     'featured' => isset($_POST['itay_testimonial_featured']) ? 1 : 0
+//   );
+//   update_post_meta($post_id, 'testimonial_options', $meta_inputs);
+// }
+?>
+  </Code>
+-->
+
+#41 -- Create Sortable Custom Columns
+<!-- 
+  In this lesson, we're going to create custom columns that are actually sortable on how to print our custom data in those custom columns.
+
+  Lets access testimonialController.php, we need an action to edit the default columns of the CPT.
+  It's called 'manage_{$post_type}_posts_columns', this is a really particular type of hook, it allows us to use this hook multiple type based on the CPT we want it to execute for.
+
+  The callback function for that action accepts a $columns array which they are available in the default CPT(title, description..);
+
+  At the end of the method we return the $columns but with their new names and their position in the array is the position they'll output on the page. View the code for the creation of the columns below:
+  <Code>
+    public function register() {
+      add_action('manage_testimonial_posts_columns', array($this, 'set_custom_columns'));
+    }
+
+    public function set_custom_columns($columns) {
+      $title = $columns['title'];
+      $date = $columns['date'];
+      unset($columns['title'], $columns['date']);
+
+      $columns['name'] = 'Author Name';
+      $columns['title'] = $title;
+      $columns['approved'] = 'Approved';
+      $columns['featured'] = 'Featured';
+      $columns['date'] = $date;
+
+      return $columns;
+    }
+  </Code> 
+  Please observe how we empty out the $columns array from data (we store the data inside of it beforehand) and then we return it with out ordering and our new columns. Also note that this is connected to a specific hook called:
+  <Code>
+    manage_{$post_type_NAME}_posts_columns
+  </Code>
+  
+  Then we want to put our data inside those columns so we hook onto another hook called:
+  <Code>
+    add_action('manage_testimonial_posts_custom_column', array($this, 'set_custom_columns_data'), 10, 2);
+  </Code>
+
+  This action hook passes 2 parameters to the callback method:
+  $column and $post_id.
+
+  Since this is using the WP_Loop this passes the current post id which is great, with that knowledge we can access the data saved in the DB of that current post type's testimonial metabox and output it where we need, view the code below for the data fetching and outputting it:
+  <Code>
+    public function set_custom_columns_data($column, $post_id) {
+      $data = get_post_meta($post_id, 'testimonial_options', true);
+
+      // Teachers code, more explicit and offers more configuration.
+      $name = isset($data['name']) ? $data['name'] : '';
+      $email = isset($data['email']) ? $data['email'] : '';
+      $approved = isset($data['approved']) && $data['approved'] === 1 ? 'Yes' : 'No';
+      $featured = isset($data['featured']) && $data['featured'] === 1 ? 'Yes' : 'No';
+
+      switch ($column) {
+        case 'name':
+          echo '<strong>' . $name . '</strong><br><a href="mailto:' . $email . '">' . $email . '</a>';
+          break;
+
+        case 'approved':
+          echo $approved;
+          break;
+
+        case 'featured':
+          echo $featured;
+          break;
+      }
+    }
+  </Code>
+  In this code we get the data from the db's post_meta table where the post_meta_id is $post_id (the arg passed from the hook) and then we perform some checking and for each iteration of the WP loop we output the data.
+
+  Each iteration of the WP loop here is each column, so we simply need to perform a check if we're on the column we want and then echo out the data we wish to be output there!
+-->
+
+
+#42 -- Custom Settings in CPT
+<!-- 
+  In this lesson, we'll learn how to create a small settings page in the testimonial CPT to list the 2 shortcodes that we'll need in order to allow the users to use the testimonial.
+  One is related to the custom form.
+  2nd form is related to the slideshow with the list of all the featured testimonials the user can pick.
+
+  Lets use the settings api to implement it.
+  We create an instance of the settings api and then continue to create the shortcode method inside the testimonialController.php.
+
+  When trying to create the page for the settings inside the shortcode method we need an array of arguments, that array of arguments consists of a parent_slug (because it's a submenu page).
+
+  Whenever we use this method and try to insert a sub page on an existing page that WP already generated we use the slug that WP gives us, for example in this case we use :
+    <Code>
+      'parent_slug' => 'edit.php?post_type=testimonial'
+    </Code>
+
+  This way the settings api knows exactly where we want to output the settings fields but here we want to use the settings api firstly to create the subpage that'll be located under Testimonials dashboard admin page.
+
+  Then we do the regular stuff of creating the callbacks file for the testimonials and referencing the callback method of the generation of the html of the testimonials shortcode subpage to the templates folder and the testimonial.php file.
 
 -->
