@@ -32,6 +32,21 @@ class TestimonialController extends BaseController {
     add_filter('manage_edit-testimonial_sortable_columns', array($this, 'set_custom_columns_sortable'));
 
     $this->setShortcodePage();
+    add_shortcode('testimonial-form', array($this, 'testimonial_form'));
+  }
+  public function testimonial_form() {
+    // Here instead of writing html here we can create a new file and require it once here and output it in a clean way using ob_Start and ob_clean_End.
+    // This'll tell php to read whatever we're gonna write but don't  print it directly in this page, wait for the code to tell you how to handle this page.
+    // Whenever we need to print html that needs to contain php execution, it's best to use ob_start and ob_get_clean.
+    ob_start();
+
+    require_once("$this->plugin_path/templates/contact-form.php");
+    // echo "<script src=\"$this->plugin_url/src/user/js/form.js\"";
+
+    wp_enqueue_script('form-js', $this->plugin_url . '/build/form.js', array(), 1.0, true);
+    wp_enqueue_style('form-style', $this->plugin_url . 'build/userstyle.css');
+
+    return ob_get_clean();
   }
   public function setShortcodePage() {
     $subpage = array(

@@ -1729,4 +1729,57 @@ Testimonial Summary:
 
   Then we do the regular stuff of creating the callbacks file for the testimonials and referencing the callback method of the generation of the html of the testimonials shortcode subpage to the templates folder and the testimonial.php file.
 
+  We can do some specific settings right inside the CPT because the CPT has an admin page, so we basically add a submenu to it which'll be the settings of it.
+
+-->
+
+#43 -- Custom Settings in CPT
+<!-- 
+  In this lesson, we'll learn how to generate a shortocde to allow the user to print a form to submit a testimonial.
+
+  Inside the register method we can use another hook from WP to generate the shortcode, it's called add_shortcode();
+  The 1st arg is what a user has to write in order to print the shortcode.
+
+  Wow in this lesson I learned a bunch of things!
+  Basically a shortcode is a snippet an admin of the website can insert into the post's description wrapped in bracket and that'll trigger the output of html on the front-end that's associated with that specific shortcode.
+
+  Also I learned how to enqueue JS for a specific front-end page.
+  It needs to be output in the .php file of that specific page, so it'd be rendered only on that page, it's really simple actually.
+
+  I also learned how to enqeueu specific css files, it's really beautiful.
+
+  <Code>
+    public function testimonial_form() {
+      // Here instead of writing html here we can create a new file and require it once here and output it in a clean way using ob_Start and ob_clean_End.
+      // This'll tell php to read whatever we're gonna write but don't  print it directly in this page, wait for the code to tell you how to handle this page.
+      // Whenever we need to print html that needs to contain php execution, it's best to use ob_start and ob_get_clean.
+      ob_start();
+
+      require_once("$this->plugin_path/templates/contact-form.php");
+      // echo "<script src=\"$this->plugin_url/src/user/js/form.js\"";
+
+      wp_enqueue_script('formJS', $this->plugin_url . '/build/form.js', array(), 1.0, true);
+      wp_enqueue_style('formSTYLES', $this->plugin_url . 'build/userstyle.css');
+
+      return ob_get_clean();
+    }
+  </Code>
+-->
+
+#45 -- Quick SCSS and JS form styling
+<!-- 
+  In this lesson, we're going to style our form and give it js functionalities.
+-->
+
+#46 -- JS Form Validation in ES6
+<!-- 
+  In this lesson, we'll complete the js part of the form submission in the testimonial section.
+  Lets firstly reset the form messages and then validate them.
+-->
+
+#47 -- JS ES6 Fetch Request to WP_Ajax
+<!-- 
+  In this lesson we'll send the form submission to the admin-ajax.php file to handle the ajax request.
+  
+
 -->

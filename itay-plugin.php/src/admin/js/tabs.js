@@ -1,4 +1,3 @@
-import "../scss/mystyle.scss";
 import "code-prettify";
 window.addEventListener("DOMContentLoaded", function () {
   PR.prettyPrint();

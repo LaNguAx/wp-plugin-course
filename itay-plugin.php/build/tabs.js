@@ -1,41 +1,6 @@
 /******/ (function() { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./src/admin/js/myscript.js":
-/*!**********************************!*\
-  !*** ./src/admin/js/myscript.js ***!
-  \**********************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _scss_mystyle_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../scss/mystyle.scss */ "./src/admin/scss/mystyle.scss");
-/* harmony import */ var code_prettify__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! code-prettify */ "./node_modules/code-prettify/src/prettify.js");
-/* harmony import */ var code_prettify__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(code_prettify__WEBPACK_IMPORTED_MODULE_1__);
-
-
-window.addEventListener("DOMContentLoaded", function () {
-  PR.prettyPrint();
-  const navTabContainer = document.querySelector(".nav.nav-tabs");
-  if (navTabContainer) {
-    navTabContainer.addEventListener("click", function (e) {
-      e.preventDefault();
-      const target = e.target.closest("li");
-      if (!target) return;
-      const targetPaneID = target.firstElementChild.getAttribute("href");
-      const navTabs = document.querySelectorAll(".nav.nav-tabs > li");
-      navTabs.forEach(navTab => navTab.classList.remove("active"));
-      const tabs = document.querySelectorAll(".tab-pane");
-      tabs.forEach(tab => tab.classList.remove("active"));
-      const clickedTab = document.querySelector(targetPaneID);
-      target.classList.add("active");
-      clickedTab.classList.add("active");
-    });
-  }
-});
-
-/***/ }),
-
 /***/ "./node_modules/code-prettify/src/prettify.js":
 /*!****************************************************!*\
   !*** ./node_modules/code-prettify/src/prettify.js ***!
@@ -1786,19 +1751,6 @@ var prettyPrint;
 })();
 
 
-/***/ }),
-
-/***/ "./src/admin/scss/mystyle.scss":
-/*!*************************************!*\
-  !*** ./src/admin/scss/mystyle.scss ***!
-  \*************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-// extracted by mini-css-extract-plugin
-
-
 /***/ })
 
 /******/ 	});
@@ -1873,15 +1825,33 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be in strict mode.
 !function() {
 "use strict";
-/*!**********************************!*\
-  !*** ./src/admin/adminscript.js ***!
-  \**********************************/
+/*!******************************!*\
+  !*** ./src/admin/js/tabs.js ***!
+  \******************************/
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _js_myscript_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./js/myscript.js */ "./src/admin/js/myscript.js");
-/* harmony import */ var _admin_scss_mystyle_scss__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../admin/scss/mystyle.scss */ "./src/admin/scss/mystyle.scss");
+/* harmony import */ var code_prettify__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! code-prettify */ "./node_modules/code-prettify/src/prettify.js");
+/* harmony import */ var code_prettify__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(code_prettify__WEBPACK_IMPORTED_MODULE_0__);
 
-
+window.addEventListener("DOMContentLoaded", function () {
+  PR.prettyPrint();
+  const navTabContainer = document.querySelector(".nav.nav-tabs");
+  if (navTabContainer) {
+    navTabContainer.addEventListener("click", function (e) {
+      e.preventDefault();
+      const target = e.target.closest("li");
+      if (!target) return;
+      const targetPaneID = target.firstElementChild.getAttribute("href");
+      const navTabs = document.querySelectorAll(".nav.nav-tabs > li");
+      navTabs.forEach(navTab => navTab.classList.remove("active"));
+      const tabs = document.querySelectorAll(".tab-pane");
+      tabs.forEach(tab => tab.classList.remove("active"));
+      const clickedTab = document.querySelector(targetPaneID);
+      target.classList.add("active");
+      clickedTab.classList.add("active");
+    });
+  }
+});
 }();
 /******/ })()
 ;
-//# sourceMappingURL=adminscript.js.map
+//# sourceMappingURL=tabs.js.map
